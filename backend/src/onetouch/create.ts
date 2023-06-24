@@ -15,7 +15,7 @@ export default router.post("/create", async (req, res) => {
             res.status(401).send("パラメータが不足しています。");
             return;
         }
-        if(!(Number.isInteger(req.body.point) && req.body.point >= 0)){
+        if(!(Number.isInteger(req.body.point) && req.body.point > 0)){
             res.status(401).send("pointパラメータが不正です。");
             return;
         }

@@ -27,6 +27,7 @@ export const TopPage = () => {
                     <Link to={"/instantWinList"}>インスタントウィン</Link>
                     <Link to={"/shoppingRallyList"}>お買い物ラリー</Link>
                     <Link to={"/questionnaireList"}>アンケート</Link>
+                    <Link to={"/onetouchList"}>ワンタッチキャンペーン</Link>
                 </React.Fragment>
             }
         </React.Fragment>

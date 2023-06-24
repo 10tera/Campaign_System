@@ -88,11 +88,6 @@ export const AdminOneTouchLog = () => {
         setIsOpen(true);
     }
 
-    const handleDownloadCsv = () => {
-        let csvData = "";
-        downloadCSV(csvData, "data.csv");
-    }
-
     const handleDeleteCampaign = async () => {
         try {
             const res = await OneTouchLogDelete({ id: targetDeleteId });
@@ -104,6 +99,19 @@ export const AdminOneTouchLog = () => {
             window.alert("エラーにより削除できませんでした。");
             return;
         }
+    }
+    const handleDownloadCsv = () => {
+        let csvData = "";
+
+        if (!data) {
+            window.alert("error")
+            return;
+        }
+        csvData += `ログID,ユーザーUID,賞品ID\n`;
+        for(let i=0;i<data.length;i++){
+            csvData += `${data[i].id},${data[i].uid},${data[i].prizeId}\n`;
+        }
+        downloadCSV(csvData, "data.csv");
     }
 
     if (isLoading) return (<h1>ロード中</h1>)
@@ -131,6 +139,7 @@ export const AdminOneTouchLog = () => {
             <div css={mainDivCss}>
                 <h2>ワンタッチログ管理</h2>
                 <h2>一覧</h2>
+                <Button variant={"contained"} onClick={handleDownloadCsv}>CSVでダウンロード</Button>
                 <React.Fragment>
                     <TableContainer>
                         <TableHead>

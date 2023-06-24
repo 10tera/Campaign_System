@@ -20,6 +20,8 @@ const DeleteOneTouch = async({id}:DeleteOneTouchType) => {
         data:{
             id:id
         }
+    }).catch((e) => {
+        throw e;
     });
     return res.data;
 };

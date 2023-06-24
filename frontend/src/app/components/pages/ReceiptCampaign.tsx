@@ -53,7 +53,7 @@ export const ReceiptCampaign = () => {
                 return;
             }
         }
-    });
+    },[]);
     const handleSelectFileButtonClick = () => {
         inputRef.current?.click();
     }

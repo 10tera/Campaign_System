@@ -82,7 +82,7 @@ export const CreateOneTouch = () => {
             setHelperText("企業を選択してください。");
             return;
         }
-        if (!(point >= 0 && Number.isInteger(point))) {
+        if (!(point > 0 && Number.isInteger(point))) {
             setIsFormError(true);
             setHelperText("交換ポイント数を正の整数で入力してください。");
             return;

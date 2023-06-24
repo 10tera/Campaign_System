@@ -49,7 +49,7 @@ export const InstantWin = () => {
                 return;
             }
         }
-    });
+    },[]);
     const handleSelectFileButtonClick = () => {
         inputRef.current?.click();
     }

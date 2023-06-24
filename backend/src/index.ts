@@ -56,6 +56,11 @@ import create_onetouch from "./onetouch/create";
 import _delete_onetouch from "./onetouch/delete";
 import getAll_onetouch from "./onetouch/getAll";
 
+import create_onetouchlog from "./onetouchlog/create";
+import _delete_onetouchlog from "./onetouchlog/delete";
+import getAll_onetouchlog from "./onetouchlog/getAll";
+import getUserPoint from "./onetouchlog/getUserPoint";
+
 dotenv.config();
 
 const logger = log4js.getLogger();
@@ -125,3 +130,8 @@ app.use("/questionnaire",isAlreadyApply_questionnaire);
 app.use("/onetouch",create_onetouch);
 app.use("/onetouch",_delete_onetouch);
 app.use("/onetouch",getAll_onetouch);
+
+app.use("/onetouchlog",create_onetouchlog);
+app.use("/onetouchlog",_delete_onetouchlog);
+app.use("/onetouchlog",getAll_onetouchlog);
+app.use("/onetouchlog",getUserPoint)
