@@ -23,3 +23,6 @@ export * from "./ShoppingRally";
 export * from "./AdminQuestionnaire";
 export * from "./QuestionnaireList";
 export * from "./Questionnaire";
+
+export * from "./AdminOneTouch";
+export * from "./AdminOneTouchLog";

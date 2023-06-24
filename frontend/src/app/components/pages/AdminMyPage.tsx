@@ -12,6 +12,7 @@ import {CreateReceiptCampaign} from "../split/CreateReceiptCampaign";
 import {CreateInstantWin } from "../split/CreateInstantWin";
 import { CreateShoppingRally } from "../split/CreateShoppingRally";
 import {CreateQuestionnaire} from "../split/CreateQuestionnaire";
+import { CreateOneTouch } from "../split/CreateOneTouch";
 
 const mainDivCss = css({
     paddingLeft: "30px",
@@ -83,6 +84,11 @@ export const AdminMyPage = () => {
                     <CreateQuestionnaire/>
                     <h2>アンケート管理ページ</h2>
                     <Link to={"/admin/questionnaire"}>アンケート管理</Link>
+                    <CreateOneTouch/>
+                    <h2>ワンタッチ管理ページ</h2>
+                    <Link to={"/admin/onetouch"}>ワンタッチ管理</Link>
+                    <h2>ワンタッチログ管理ページ</h2>
+                    <Link to={"/admin/onetouch/log"}>ワンタッチログ管理</Link>
                 </div>
             </div>
         </React.Fragment>

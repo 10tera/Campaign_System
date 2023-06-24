@@ -52,6 +52,10 @@ import changeActive_questionnaire from "./questionnaire/changeActive";
 import apply_questionnaire from "./questionnaire/apply";
 import isAlreadyApply_questionnaire from "./questionnaire/isAlreadyApply";
 
+import create_onetouch from "./onetouch/create";
+import _delete_onetouch from "./onetouch/delete";
+import getAll_onetouch from "./onetouch/getAll";
+
 dotenv.config();
 
 const logger = log4js.getLogger();
@@ -117,3 +121,7 @@ app.use("/questionnaire",get_questionnaire);
 app.use("/questionnaire",changeActive_questionnaire);
 app.use("/questionnaire",apply_questionnaire);
 app.use("/questionnaire",isAlreadyApply_questionnaire);
+
+app.use("/onetouch",create_onetouch);
+app.use("/onetouch",_delete_onetouch);
+app.use("/onetouch",getAll_onetouch);

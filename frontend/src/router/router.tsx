@@ -1,5 +1,5 @@
 import {Routes,Route} from "react-router-dom";
-import {TopPage,SignUp,Login, MyPage,EmailVerify,ResetPassword,AdminLogin,AdminMyPage,AdminReceiptCampaign,ReceiptCampaignList,ReceiptCampaign,AdminInstantWin,InstantWin,InstantWinList,AdminShoppingRally,ShoppingRallyList,ShoppingRally,AdminQuestionnaire,Questionnaire,QuestionnaireList} from "../app/components/pages";
+import {TopPage,SignUp,Login, MyPage,EmailVerify,ResetPassword,AdminLogin,AdminMyPage,AdminReceiptCampaign,ReceiptCampaignList,ReceiptCampaign,AdminInstantWin,InstantWin,InstantWinList,AdminShoppingRally,ShoppingRallyList,ShoppingRally,AdminQuestionnaire,Questionnaire,QuestionnaireList, AdminOneTouch, AdminOneTouchLog} from "../app/components/pages";
 import { AuthFirebase } from "./AuthFirebase";
 import { NoAuthFirebase } from "./NoAuthFirebase";
 import { AuthAdmin } from "./AuthAdmin";
@@ -20,6 +20,8 @@ export const Router = () => {
             <Route path={"/admin/instantWin"} element={<AuthAdmin children={<AdminInstantWin/>}/>}></Route>
             <Route path={"/admin/shoppingRally"} element={<AuthAdmin children={<AdminShoppingRally/>}/>}></Route>
             <Route path={"/admin/questionnaire"} element={<AuthAdmin children={<AdminQuestionnaire/>} />}></Route>
+            <Route path={"/admin/onetouch"} element={<AuthAdmin children={<AdminOneTouch/>}/>}></Route>
+            <Route path={"/admin/onetouch/log"} element={<AuthAdmin children={<AdminOneTouchLog/>}/>}></Route>
 
             <Route path={"/receiptCampaignList"} element={<AuthFirebase children={<ReceiptCampaignList/>}/>}></Route>
             <Route path={"/receiptCampaign/:id"} element={<AuthFirebase children={<ReceiptCampaign/>}/>}></Route>

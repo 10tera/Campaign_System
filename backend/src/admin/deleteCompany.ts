@@ -39,7 +39,6 @@ export default router.delete("/delete", async (req, res) => {
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。")
     } finally {
-        await connection.end();
         return;
     }
 });
