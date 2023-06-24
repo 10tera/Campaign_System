@@ -1,0 +1,1 @@
+create database campaign_system CHARACTER SET utf8;
