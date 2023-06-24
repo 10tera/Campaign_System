@@ -26,7 +26,9 @@ export default router.put("/changeUserState", async (req, res) => {
         await connection.rollback();
         res.status(401).send("何らかのエラーが発生しました。");
     } finally {
-        return;
+        if (connection) {
+            await connection.end();
+        }
     }
 
 });

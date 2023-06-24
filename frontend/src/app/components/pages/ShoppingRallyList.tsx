@@ -7,6 +7,17 @@ import { TableContainer, TableHead, TableRow, TableCell, TableBody, Button } fro
 import { companysGetAll } from "../../api/ApiClient";
 import {shoppingRallyGetAll} from "../../api/ShoppingRallyApiClient";
 
+const TitleDivCss = css({
+    width: "100%",
+});
+const TitleCss = css({
+    textAlign: "center"
+});
+const TableContainerCss = css({
+    width: "fit-content",
+    margin: "0 auto"
+});
+
 export const ShoppingRallyList = () => {
     const { data, error, isLoading } = shoppingRallyGetAll();
     const { data: companyData, error: companyError, isLoading: companyIsLoading } = companysGetAll();
@@ -17,9 +28,11 @@ export const ShoppingRallyList = () => {
     if (error || companyError) return (<h1>エラーが発生しました</h1>);
     return (
         <React.Fragment>
-            <Link to={"/"}>トップ</Link>
-            <h1>お買い物ラリー一覧</h1>
-            <TableContainer>
+            <Button variant={"outlined"} onClick={() => navigate("/")}>トップ</Button>
+            <div css={TitleDivCss}>
+                <h1 css={TitleCss}>お買い物ラリー一覧</h1>
+            </div>
+            <TableContainer css={TableContainerCss}>
                 <TableHead>
                     <TableRow>
                         <TableCell align={"center"}>タイトル</TableCell>

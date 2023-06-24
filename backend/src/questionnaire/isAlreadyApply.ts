@@ -25,5 +25,9 @@ export default router.get("/isAlreadyApply", async (req, res) => {
         logger.error(e);
         res.status(401).send("エラーが発生しました");
         return;
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
     }
 });

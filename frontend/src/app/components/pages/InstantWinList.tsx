@@ -6,6 +6,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { TableContainer, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
 import { instantWinGetAll, companysGetAll } from "../../api/ApiClient";
 
+const TitleDivCss = css({
+    width: "100%",
+});
+const TitleCss = css({
+    textAlign: "center"
+});
+const TableContainerCss = css({
+    width: "fit-content",
+    margin: "0 auto"
+});
+
 export const InstantWinList = () => {
     const { data, error, isLoading } = instantWinGetAll();
     const { data: companyData, error: companyError, isLoading: companyIsLoading } = companysGetAll();
@@ -16,9 +27,11 @@ export const InstantWinList = () => {
     if (error || companyError) return (<h1>エラーが発生しました</h1>);
     return (
         <React.Fragment>
-            <Link to={"/"}>トップ</Link>
-            <h1>インスタントウィン一覧</h1>
-            <TableContainer>
+            <Button variant={"outlined"} onClick={() => navigate("/")}>トップ</Button>
+            <div css={TitleDivCss}>
+                <h1 css={TitleCss}>インスタントウィン一覧</h1>
+            </div>
+            <TableContainer css={TableContainerCss}>
                 <TableHead>
                     <TableRow>
                         <TableCell align={"center"}>タイトル</TableCell>

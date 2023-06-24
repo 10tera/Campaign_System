@@ -28,8 +28,9 @@ export default router.put("/set", async (req, res) => {
         await connection.rollback();
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。");
-    } finally{
-        return;
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
     }
-    
 });

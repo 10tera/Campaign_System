@@ -8,14 +8,19 @@ const logger = log4js.getLogger();
 
 export default router.get("/getAllCompanys", async (req, res) => {
     logger.info(`Access to /company/getAllCompanys`);
+    let connection:any;
     try {
-        const connection = await mysql.createConnection(db_setting);
-        const [row, fields] = await connection.execute<mysql.RowDataPacket[]>(`SELECT * from companys`);
+        connection = await mysql.createConnection(db_setting);
+        const [row, fields] = await connection.execute(`SELECT * from companys`);
         res.status(200).send(row);
         return;
     } catch (e) {
         logger.error(e);
         res.status(401).send(`何らかのエラーが発生しました。${e}`);
         return;
+    }finally{
+        if (connection) {
+            await connection.end();
+        }
     }
 });

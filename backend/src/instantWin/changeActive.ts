@@ -29,8 +29,5 @@ export default router.put("/changeActive", async (req, res) => {
     } catch (e) {
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。");
-    } finally {
-        return;
     }
-
 });

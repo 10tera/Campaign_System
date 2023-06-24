@@ -94,5 +94,9 @@ export default router.post("/apply", upload.single("img"), async (req, res) => {
         logger.error(e);
         res.status(401).send("エラーが発生しました");
         return;
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
     }
 });

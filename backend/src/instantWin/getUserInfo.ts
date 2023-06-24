@@ -13,8 +13,9 @@ export default router.get("/getUserInfo", async (req, res) => {
         res.status(401).send(`id/uidが指定されていません。`);
         return;
     }
+    let connection;
     try {
-        const connection = await mysql.createConnection(db_setting);
+        connection = await mysql.createConnection(db_setting);
         const [row, fields] = await connection.execute<mysql.RowDataPacket[]>(`SELECT * from instantwin_${req.query.id.toString()} where uid = ? limit 1`, [req.query.uid]);
         const [row2] = await connection.execute<mysql.RowDataPacket[]>(`SELECT * from users where uid = ? limit 1`, [req.query.uid])
         if (row.length === 0) {
@@ -34,5 +35,9 @@ export default router.get("/getUserInfo", async (req, res) => {
         logger.error(e);
         res.status(401).send(`何らかのエラーが発生しました。${e}`);
         return;
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
     }
 });

@@ -28,6 +28,9 @@ export default router.post("/add", async (req, res) => {
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。");
     } finally{
+        if (connection) {
+            await connection.end();
+        }
         return;
     }
 });

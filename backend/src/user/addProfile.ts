@@ -67,7 +67,9 @@ export default router.post("/add",async(req,res) => {
         logger.error(e);
         res.status(401).send("DB操作でエラーが発生しました。");
         await connection?.rollback();
-    } finally{
-        return;
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
     }
 });

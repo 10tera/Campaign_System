@@ -2,6 +2,8 @@ import express from "express";
 import log4js from "log4js";
 import dotenv from "dotenv";
 import cors from "cors";
+import mysql from "mysql2";
+import { db_setting } from "./db/setting";
 
 import addProfile from "./user/addProfile";
 import setProfile from "./user/setProfile";
@@ -75,6 +77,9 @@ const corsOptions = {
 }
 
 const app = express();
+
+//const connection = mysql.createConnection(db_setting);
+
 
 app.use(express.json());
 app.use(cors());

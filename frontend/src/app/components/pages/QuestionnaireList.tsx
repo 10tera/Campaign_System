@@ -1,11 +1,22 @@
 /** @jsxImportSource @emotion/react */
 /** @jsx jsx */
 import { css } from "@emotion/react";
-import React, { useEffect, useState, ChangeEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { TableContainer, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
+import React, {} from "react";
+import { useNavigate } from "react-router-dom";
+import { TableContainer, TableHead, TableRow, TableCell, Button } from "@mui/material";
 import { companysGetAll } from "../../api/ApiClient";
 import { questionnaireGetAll } from "../../api/QuestionnaireApiClient";
+
+const TitleDivCss = css({
+    width: "100%",
+});
+const TitleCss = css({
+    textAlign: "center"
+});
+const TableContainerCss = css({
+    width: "fit-content",
+    margin: "0 auto"
+});
 
 export const QuestionnaireList = () => {
     const { data, error, isLoading } = questionnaireGetAll();
@@ -17,9 +28,11 @@ export const QuestionnaireList = () => {
     if (error || companyError) return (<h1>エラーが発生しました</h1>);
     return (
         <React.Fragment>
-            <Link to={"/"}>トップ</Link>
-            <h1>アンケート一覧</h1>
-            <TableContainer>
+            <Button variant={"outlined"} onClick={() => navigate("/")}>トップ</Button>
+            <div css={TitleDivCss}>
+                <h1 css={TitleCss}>アンケート一覧</h1>
+            </div>
+            <TableContainer css={TableContainerCss}>
                 <TableHead>
                     <TableRow>
                         <TableCell align={"center"}>タイトル</TableCell>

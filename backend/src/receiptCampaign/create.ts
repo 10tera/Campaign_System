@@ -40,6 +40,8 @@ export default router.post("/create", async (req, res) => {
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。");
     } finally {
-        return;
+        if (connection) {
+            await connection.end();
+        }
     }
 });
