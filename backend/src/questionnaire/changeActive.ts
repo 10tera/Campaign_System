@@ -1,0 +1,36 @@
+import express from "express";
+import log4js from "log4js";
+import mysql from "mysql2/promise";
+import fs from "fs";
+import { db_setting } from "../db/setting";
+
+const router = express.Router();
+const logger = log4js.getLogger();
+
+export default router.put("/changeActive", async (req, res) => {
+    logger.info(`Access to /questionnaire/changeActive`);
+    try {
+        if (!("companyId" in req.body)) {
+            res.status(401).send("パラメータが不足しています。");
+            return;
+        }
+        const roadFile = fs.readFileSync(`config/questionnaire/${req.body.companyId.toString()}.json`, "utf-8");
+        const roadJsonFile = JSON.parse(roadFile);
+        roadJsonFile.isActive = req.body.isActive;
+        const afterData = JSON.stringify(roadJsonFile, undefined, 4);
+        fs.writeFile(`config/questionnaire/${req.body.companyId.toString()}.json`, afterData, { encoding: "utf-8" }, (err) => {
+            if (err) {
+                res.status(401).send("書き込み時にエラーが発生しました。");
+                return;
+            }
+            res.status(200).send("更新完了");
+            return;
+        });
+    } catch (e) {
+        logger.error(e);
+        res.status(401).send("何らかのエラーが発生しました。");
+    } finally {
+        return;
+    }
+
+});
