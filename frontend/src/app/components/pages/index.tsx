@@ -28,3 +28,6 @@ export * from "./AdminOneTouch";
 export * from "./AdminOneTouchLog";
 export * from "./OneTouchList";
 export * from "./OneTouch";
+
+export * from "./AdminUserInfo";
+export * from "./AdminUserPoint";

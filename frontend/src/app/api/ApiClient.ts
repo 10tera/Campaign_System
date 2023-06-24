@@ -362,6 +362,15 @@ const loginAdmin = async ({uid,password}:LoginAdminType) => {
 }
 export const adminLogin = (props:LoginAdminType) => loginAdmin(props);
 
+const getAllProfile = async() => {
+    const res = await axios.get(`${apiHost}/user/getAll`).catch((e) => {
+        throw e;
+    });
+    return res.data;
+};
+export const userGetAll = () => useQuery("userGetAll",getAllProfile);
+
+
 const deleteProfile = async ({uid}:DeleteProfileType) => {
     const res = await axios.delete(`${apiHost}/user/delete`,{
         data:{

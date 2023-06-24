@@ -72,6 +72,10 @@ export const AdminMyPage = () => {
                         </Grid>
                     </Grid>
                     <AllCompanysTable/>
+                    <h2>ユーザー情報管理</h2>
+                    <Link to={"/admin/userInfo"}>ユーザー情報管理ページ</Link>
+                    <h2>ユーザー保有ポイント管理</h2>
+                    <Link to={"/admin/userPoint"}>ユーザー保有ポイント管理ページ</Link>
                     <CreateReceiptCampaign/>
                     <h2>レシートキャンペーン管理ページ</h2>
                     <Link to={"/admin/receiptCampaign"}>レシートキャンペーン管理</Link>

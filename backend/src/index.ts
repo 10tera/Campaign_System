@@ -7,6 +7,7 @@ import addProfile from "./user/addProfile";
 import setProfile from "./user/setProfile";
 import deleteProfile from "./user/deleteProfile";
 import getProfile from "./user/getProfile";
+import getAllProfile from "./user/getAll";
 
 import addCompany from "./admin/addCompany";
 import deleteCompany from "./admin/deleteCompany";
@@ -61,6 +62,9 @@ import _delete_onetouchlog from "./onetouchlog/delete";
 import getAll_onetouchlog from "./onetouchlog/getAll";
 import getUserPoint from "./onetouchlog/getUserPoint";
 
+import getAll_point from "./point/getAll";
+
+
 dotenv.config();
 
 const logger = log4js.getLogger();
@@ -82,6 +86,7 @@ app.use("/user",addProfile);
 app.use("/user",setProfile);
 app.use("/user",deleteProfile);
 app.use("/user",getProfile);
+app.use("/user",getAllProfile);
 
 app.use("/company",addCompany);
 app.use("/company",deleteCompany);
@@ -134,4 +139,6 @@ app.use("/onetouch",getAll_onetouch);
 app.use("/onetouchlog",create_onetouchlog);
 app.use("/onetouchlog",_delete_onetouchlog);
 app.use("/onetouchlog",getAll_onetouchlog);
-app.use("/onetouchlog",getUserPoint)
+app.use("/onetouchlog",getUserPoint);
+
+app.use("/point",getAll_point);
