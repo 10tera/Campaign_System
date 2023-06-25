@@ -68,7 +68,26 @@ import getAll_point from "./point/getAll";
 
 
 dotenv.config();
-
+log4js.configure({
+    appenders:{
+        stdout: {
+            type:"stdout"
+        },
+        system:{
+            type:"dateFile",
+            filename: "./logs/system.log",
+            pattern: '-yyyy-MM-dd',
+            keepFileExt: true,
+            daysToKeep: 30
+        }
+    },
+    categories: {
+        default: {
+            appenders: ['stdout', 'system'],
+            level: 'info'
+        }
+    }
+});
 const logger = log4js.getLogger();
 logger.level = "debug";
 

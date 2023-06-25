@@ -11,4 +11,6 @@ backend/config/receiptCampaign/*
 !backend/config/receiptCampaign/.gitkeep
 backend/config/shoppingRally/*
 !backend/config/shoppingRally/.gitkeep
+backend/logs/*
+!backend/logs/.gitkeep
 frontend/.env
