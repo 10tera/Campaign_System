@@ -5,4 +5,3 @@ backend/node_modules
 backend/.env
 backend/config
 frontend/.env
-frontend/src/firebase/firebase.ts
