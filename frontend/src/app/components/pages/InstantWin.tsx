@@ -16,6 +16,17 @@ type ReceiptCampaignType = {
     limit: number,
 }
 
+const TitleDivCss = css({
+    width: "100%",
+});
+const TitleCss = css({
+    textAlign: "center"
+});
+const TableContainerCss = css({
+    width: "fit-content",
+    margin: "0 auto"
+});
+
 const descriptionCss = css({
     whiteSpace: "pre-line",
     wordWrap: "break-word",
@@ -49,7 +60,7 @@ export const InstantWin = () => {
                 return;
             }
         }
-    },[]);
+    },[id,data,companyData]);
     const handleSelectFileButtonClick = () => {
         inputRef.current?.click();
     }
@@ -134,69 +145,124 @@ export const InstantWin = () => {
     if (isIdError) return (<h1>不正なキャンペーンIDです。</h1>);
     return (
         <React.Fragment>
-            <h1>レシートキャンペーン応募</h1>
-            <h2>キャンペーンタイトル</h2>
-            <p>{campaignInfo?.title}</p>
-            <h2>説明</h2>
-            <p css={descriptionCss}>{campaignInfo?.description}</p>
-            <h2>開催元</h2>
-            <p>{
-                (() => {
-                    for (let i = 0; i < companyData.length; i++) {
-                        if (companyData[i].id === Number(id)) {
-                            return companyData[i].name;
-                        }
-                    }
-                    return "can not find";
-                })()
-            }</p>
-            {
-                (() => {
-                    //未応募
-                    if (receiptUserInfo.length === 0) {
-                        return (<div>
-                            <h3>レシート画像選択</h3>
-                            <input onChange={handleSelectFileChange} css={inputFileCss} ref={inputRef} type={"file"} accept={"image/*"} />
-                            <Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button>
-                            {
-                                isError ? <p>{helperText}</p> : null
+            <Button variant={"outlined"} onClick={() => navigate("/")}>トップ</Button>
+            <div css={TitleDivCss}>
+                <h1 css={TitleCss}>インスタントウィン応募</h1>
+            </div>
+            <TableContainer css={TableContainerCss}>
+                <TableBody>
+                    <TableRow>
+                        <TableCell><h2>キャンペーンタイトル</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p>{campaignInfo?.title}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>説明</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p css={descriptionCss}>{campaignInfo?.description}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>開催元</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>
+                            <p>{
+                                (() => {
+                                    for (let i = 0; i < companyData.length; i++) {
+                                        if (companyData[i].id === Number(id)) {
+                                            return companyData[i].name;
+                                        }
+                                    }
+                                    return "can not find";
+                                })()
+                            }</p>
+                        </TableCell>
+                    </TableRow>
+                    {
+                        (() => {
+                            //未応募
+                            if (receiptUserInfo.length === 0) {
+                                return (<React.Fragment>
+                                    <TableRow>
+                                        <TableCell><h3>レシート画像選択</h3></TableCell>
+                                    </TableRow>
+                                    <input onChange={handleSelectFileChange} css={inputFileCss} ref={inputRef} type={"file"} accept={"image/*"} />
+                                    <TableRow>
+                                        <TableCell>
+                                            <Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button>
+                                            {
+                                                imgFile ? <p>{imgFile.name}を選択中</p> : null
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                    {
+                                        isError ? <TableRow>
+                                            <TableCell><p>{helperText}</p></TableCell>
+                                        </TableRow> : null
+                                    }
+                                    <TableRow>
+                                        <TableCell><Button disabled={isButtonDisable} variant={"contained"} onClick={handleSubmitClick}>応募する</Button></TableCell>
+                                    </TableRow>
+                                </React.Fragment>)
                             }
-                            <Button disabled={isButtonDisable} variant={"contained"} onClick={handleSubmitClick}>応募する</Button>
-                        </div>)
-                    }
-                    //承認中
-                    else if (receiptUserInfo[0].state === 0) {
-                        return (<div>
-                            <h3>現在、送信されたレシート画像は承認作業中です。</h3>
-                        </div>)
-                    }
-                    //未承認
-                    else if (receiptUserInfo[0].state === 1) {
-                        return (<div>
-                            <h3>送信されたレシート画像は承認されませんでした。再度レシート画像を送信可能です。</h3>
-                            <h2>レシート画像選択</h2>
-                            <input onChange={handleSelectFileChange} css={inputFileCss} ref={inputRef} type={"file"} accept={"image/*"} />
-                            <Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button>
-                            {
-                                isError ? <p>{helperText}</p> : null
+                            //承認中
+                            else if (receiptUserInfo[0].state === 0) {
+                                return (<React.Fragment>
+                                    <TableRow>
+                                        <TableCell><h3>現在、送信されたレシート画像は承認作業中です。</h3></TableCell>
+                                    </TableRow>
+                                </React.Fragment>)
                             }
-                            <Button disabled={isButtonDisable} variant={"contained"} onClick={handleReSubmit}>応募する</Button>
-                        </div>)
+                            //未承認
+                            else if (receiptUserInfo[0].state === 1) {
+                                return (<React.Fragment>
+                                    <TableRow>
+                                        <TableCell><h3>送信されたレシート画像は承認されませんでした。再度レシート画像を送信可能です。</h3></TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell><h2>レシート画像選択</h2></TableCell>
+                                    </TableRow>
+                                    <input onChange={handleSelectFileChange} css={inputFileCss} ref={inputRef} type={"file"} accept={"image/*"} />
+                                    <TableRow>
+                                        <TableCell>
+                                            <Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button>
+                                            {
+                                                imgFile ? <p>{imgFile.name}を選択中</p> : null
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                    {
+                                        isError ? <TableRow>
+                                            <TableCell><p>{helperText}</p></TableCell>
+                                        </TableRow> : null
+                                    }
+                                    <TableRow>
+                                        <TableCell><Button disabled={isButtonDisable} variant={"contained"} onClick={handleReSubmit}>応募する</Button></TableCell>
+                                    </TableRow>
+                                </React.Fragment>)
+                            }
+                            //承認済み
+                            else if (receiptUserInfo[0].state === 2) {
+                                return (<React.Fragment>
+                                    <TableRow>
+                                        <TableCell><h3>当選</h3></TableCell>
+                                    </TableRow>
+                                </React.Fragment>)
+                            }
+                            else if (receiptUserInfo[0].state === 3) {
+                                return (<React.Fragment>
+                                    <TableRow>
+                                        <TableCell><h3>落選</h3></TableCell>
+                                    </TableRow>
+                                </React.Fragment>)
+                            }
+                            return null;
+                        })()
                     }
-                    //承認済み
-                    else if (receiptUserInfo[0].state === 2) {
-                        return (<div>
-                            <h3>当選</h3>
-                        </div>)
-                    }
-                    else if(receiptUserInfo[0].state === 3){
-                        return <div>
-                            <h3>落選</h3>
-                        </div>
-                    }
-                    return null;
-                })()
-            }
+                </TableBody>
+            </TableContainer>
         </React.Fragment>
     )
 }

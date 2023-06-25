@@ -17,6 +17,17 @@ type ReceiptCampaignType = {
     point:number,
 }
 
+const TitleDivCss = css({
+    width: "100%",
+});
+const TitleCss = css({
+    textAlign: "center"
+});
+const TableContainerCss = css({
+    width: "fit-content",
+    margin: "0 auto"
+});
+
 const descriptionCss = css({
     whiteSpace: "pre-line",
     wordWrap: "break-word",
@@ -103,32 +114,69 @@ export const OneTouch = () => {
     if (isIdError) return (<h1>不正なキャンペーンIDです。</h1>);
     return (
         <React.Fragment>
-            <h1>ワンタッチキャンペーン賞品交換</h1>
-            <h2>キャンペーンタイトル</h2>
-            <p>{campaignInfo?.title}</p>
-            <h2>説明</h2>
-            <p css={descriptionCss}>{campaignInfo?.description}</p>
-            <h2>開催元</h2>
-            <p>{
-                (() => {
-                    for (let i = 0; i < companyData.length; i++) {
-                        if (companyData[i].id === Number(campaignInfo?.companyId)) {
-                            return companyData[i].name;
-                        }
+            <Button variant={"outlined"} onClick={() => navigate("/")}>トップ</Button>
+            <div css={TitleDivCss}>
+                <h1 css={TitleCss}>ワンタッチキャンペーン賞品交換</h1>
+            </div>
+            <TableContainer css={TableContainerCss}>
+                <TableBody>
+                    <TableRow>
+                        <TableCell><h2>キャンペーンタイトル</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p>{campaignInfo?.title}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>説明</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p css={descriptionCss}>{campaignInfo?.description}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>開催元</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>
+                            <p>{
+                                (() => {
+                                    for (let i = 0; i < companyData.length; i++) {
+                                        if (companyData[i].id === Number(campaignInfo?.companyId)) {
+                                            return companyData[i].name;
+                                        }
+                                    }
+                                    return "can not find";
+                                })()
+                            }</p>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>賞品ID</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p>{campaignInfo?.id}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>交換ポイント数</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p>{campaignInfo?.point}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>現在の所持ポイント数</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p>{nowPoint}</p></TableCell>
+                    </TableRow>
+                    {
+                        isError ? <TableRow>
+                            <TableCell><p>{helperText}</p></TableCell>
+                        </TableRow> : null
                     }
-                    return "can not find";
-                })()
-            }</p>
-            <h2>賞品ID</h2>
-            <p>{campaignInfo?.id}</p>
-            <h2>交換ポイント数</h2>
-            <p>{campaignInfo?.point}</p>
-            <h2>現在の所持ポイント数</h2>
-            <p>{nowPoint}</p>
-            {
-                isError ? <p>{helperText}</p> : null
-            }
-            <Button disabled={isButtonDisable} variant={"contained"} onClick={handleSubmitClick}>交換する</Button>
+                    <TableRow>
+                        <TableCell><Button disabled={isButtonDisable} variant={"contained"} onClick={handleSubmitClick}>交換する</Button></TableCell>
+                    </TableRow>
+                </TableBody>
+            </TableContainer>
         </React.Fragment>
     )
 }

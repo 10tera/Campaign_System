@@ -6,8 +6,8 @@
   "proxy": "http://localhost:3100",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:dev": "webpack --mode development",
-    "build:prod": "webpack --mode production"
+    "build:dev": "cross-env NODE_ENV=dev webpack --mode development",
+    "build:prod": "cross-env NODE_ENV=prod webpack --mode production"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,8 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.4",
     "axios": "^1.4.0",
+    "cross-env": "^7.0.3",
+    "dotenv-webpack": "^8.0.1",
     "firebase": "^9.22.1",
     "jssha": "^3.3.0",
     "process": "^0.11.10",
@@ -26,7 +28,7 @@
     "react-router-dom": "^6.12.0"
   },
   "devDependencies": {
-    "@types/node": "^20.2.5",
+    "@types/node": "^20.3.1",
     "@types/react": "^18.2.9",
     "@types/react-dom": "^18.2.4",
     "@types/react-router-dom": "^5.3.3",

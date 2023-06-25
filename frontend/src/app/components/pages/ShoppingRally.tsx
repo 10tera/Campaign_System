@@ -17,6 +17,17 @@ type ReceiptCampaignType = {
     limit: number,
 }
 
+
+const TitleDivCss = css({
+    width: "100%",
+});
+const TitleCss = css({
+    textAlign: "center"
+});
+const TableContainerCss = css({
+    width: "fit-content",
+    margin: "0 auto"
+});
 const descriptionCss = css({
     whiteSpace: "pre-line",
     wordWrap: "break-word",
@@ -87,7 +98,7 @@ export const ShoppingRally = () => {
                 return;
             }
         }
-    });
+    },[id,data,companyData]);
     const handleSelectFileButtonClick1 = () => {
         inputRef1.current?.click();
     }
@@ -179,141 +190,173 @@ export const ShoppingRally = () => {
     if (isIdError) return (<h1>不正なキャンペーンIDです。</h1>);
     return (
         <React.Fragment>
-            <h1>レシートキャンペーン応募</h1>
-            <h2>キャンペーンタイトル</h2>
-            <p>{campaignInfo?.title}</p>
-            <h2>説明</h2>
-            <p css={descriptionCss}>{campaignInfo?.description}</p>
-            <h2>開催元</h2>
-            <p>{
-                (() => {
-                    for (let i = 0; i < companyData.length; i++) {
-                        if (companyData[i].id === Number(id)) {
-                            return companyData[i].name;
-                        }
-                    }
-                    return "can not find";
-                })()
-            }</p>
-            <h2>スタンプ</h2>
-            <p>スタンプをクリックして、レシート画像を送付してください。</p>
-            <p>※画像を選択すると、自動で送信されます。誤送付にご注意ください。</p>
-            <div css={gridStampCss}>
-                {
-                    (() => {
-                        console.log(userInfo[0]);
-                        //未応募
-                        if (userInfo.length === 0) {
-                            return (<div>
-                                <input onChange={handleSelectFileChange1} css={inputFileCss} ref={inputRef1} type={"file"} accept={"image/*"} />
-                                <input onChange={handleSelectFileChange2} css={inputFileCss} ref={inputRef2} type={"file"} accept={"image/*"} />
-                                <input onChange={handleSelectFileChange3} css={inputFileCss} ref={inputRef3} type={"file"} accept={"image/*"} />
-                                <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick1} />
-                                <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick2} />
-                                <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick3} />
-                                {
-                                    isError ? <p>{helperText}</p> : null
-                                }
-                            </div>)
-                        }
-                        else {
-                            let ele = [];
-                            switch (userInfo[0].state1) {
-                                case 0:
-                                    ele.push(<div css={stampDivCss}>
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
-                                        <p css={pInImgCss}>承認中</p>
-                                        <div css={overlayInImgCss} />
-                                    </div>)
-                                    break;
-                                case 1:
-                                    ele.push(<React.Fragment>
-                                        <input onChange={handleSelectFileChange1} css={inputFileCss} ref={inputRef1} type={"file"} accept={"image/*"} />
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick1} />
-                                    </React.Fragment>)
-                                    break;
-                                case 2:
-                                    ele.push(<div css={stampDivCss}>
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
-                                        <p css={pInImgCss}>承認済み</p>
-                                        <div css={overlayInImgCss} />
-                                    </div>)
-                                    break;
-                                case 3:
-                                    ele.push(<React.Fragment>
-                                        <input onChange={handleSelectFileChange1} css={inputFileCss} ref={inputRef1} type={"file"} accept={"image/*"} />
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick1} />
-                                    </React.Fragment>)
-                                    break
-                                default:
-                                    return null;
-                            }
-                            switch (userInfo[0].state2) {
-                                case 0:
-                                    ele.push(<div css={stampDivCss}>
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
-                                        <p css={pInImgCss}>承認中</p>
-                                        <div css={overlayInImgCss} />
-                                    </div>)
-                                    break;
-                                case 1:
-                                    ele.push(<React.Fragment>
-                                        <input onChange={handleSelectFileChange2} css={inputFileCss} ref={inputRef2} type={"file"} accept={"image/*"} />
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick2} />
-                                    </React.Fragment>)
-                                    break;
-                                case 2:
-                                    ele.push(<div css={stampDivCss}>
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
-                                        <p css={pInImgCss}>承認済み</p>
-                                        <div css={overlayInImgCss} />
-                                    </div>)
-                                    break;
-                                case 3:
-                                    ele.push(<React.Fragment>
-                                        <input onChange={handleSelectFileChange2} css={inputFileCss} ref={inputRef2} type={"file"} accept={"image/*"} />
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick2} />
-                                    </React.Fragment>)
-                                    break
-                                default:
-                                    return null;
-                            }
-                            switch (userInfo[0].state3) {
-                                case 0:
-                                    ele.push(<div css={stampDivCss}>
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
-                                        <p css={pInImgCss}>承認中</p>
-                                        <div css={overlayInImgCss} />
-                                    </div>)
-                                    break;
-                                case 1:
-                                    ele.push(<React.Fragment>
-                                        <input onChange={handleSelectFileChange3} css={inputFileCss} ref={inputRef3} type={"file"} accept={"image/*"} />
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick3} />
-                                    </React.Fragment>)
-                                    break;
-                                case 2:
-                                    ele.push(<div css={stampDivCss}>
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
-                                        <p css={pInImgCss}>承認済み</p>
-                                        <div css={overlayInImgCss} />
-                                    </div>)
-                                    break;
-                                case 3:
-                                    ele.push(<React.Fragment>
-                                        <input onChange={handleSelectFileChange3} css={inputFileCss} ref={inputRef3} type={"file"} accept={"image/*"} />
-                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick3} />
-                                    </React.Fragment>)
-                                    break
-                                default:
-                                    return null;
-                            }
-                            return ele;
-                        }
-                        return null;
-                    })()
-                }
+            <Button variant={"outlined"} onClick={() => navigate("/")}>トップ</Button>
+            <div css={TitleDivCss}>
+                <h1 css={TitleCss}>お買い物ラリー応募</h1>
             </div>
+            <TableContainer css={TableContainerCss}>
+                <TableBody>
+                    <TableRow>
+                        <TableCell><h2>キャンペーンタイトル</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p>{campaignInfo?.title}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>説明</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><p css={descriptionCss}>{campaignInfo?.description}</p></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>開催元</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>
+                            <p>{
+                                (() => {
+                                    for (let i = 0; i < companyData.length; i++) {
+                                        if (companyData[i].id === Number(id)) {
+                                            return companyData[i].name;
+                                        }
+                                    }
+                                    return "can not find";
+                                })()
+                            }</p>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><h2>スタンプ</h2></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>
+                            <p>スタンプをクリックして、レシート画像を送付してください。</p>
+                            <p>※画像を選択すると、自動で送信されます。誤送付にご注意ください。</p>
+                        </TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>
+                            <div css={gridStampCss}>
+                                {
+                                    (() => {
+                                        console.log(userInfo[0]);
+                                        //未応募
+                                        if (userInfo.length === 0) {
+                                            return (<div>
+                                                <input onChange={handleSelectFileChange1} css={inputFileCss} ref={inputRef1} type={"file"} accept={"image/*"} />
+                                                <input onChange={handleSelectFileChange2} css={inputFileCss} ref={inputRef2} type={"file"} accept={"image/*"} />
+                                                <input onChange={handleSelectFileChange3} css={inputFileCss} ref={inputRef3} type={"file"} accept={"image/*"} />
+                                                <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick1} />
+                                                <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick2} />
+                                                <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick3} />
+                                                {
+                                                    isError ? <p>{helperText}</p> : null
+                                                }
+                                            </div>)
+                                        }
+                                        else {
+                                            let ele = [];
+                                            switch (userInfo[0].state1) {
+                                                case 0:
+                                                    ele.push(<div css={stampDivCss}>
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
+                                                        <p css={pInImgCss}>承認中</p>
+                                                        <div css={overlayInImgCss} />
+                                                    </div>)
+                                                    break;
+                                                case 1:
+                                                    ele.push(<React.Fragment>
+                                                        <input onChange={handleSelectFileChange1} css={inputFileCss} ref={inputRef1} type={"file"} accept={"image/*"} />
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick1} />
+                                                    </React.Fragment>)
+                                                    break;
+                                                case 2:
+                                                    ele.push(<div css={stampDivCss}>
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
+                                                        <p css={pInImgCss}>承認済み</p>
+                                                        <div css={overlayInImgCss} />
+                                                    </div>)
+                                                    break;
+                                                case 3:
+                                                    ele.push(<React.Fragment>
+                                                        <input onChange={handleSelectFileChange1} css={inputFileCss} ref={inputRef1} type={"file"} accept={"image/*"} />
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick1} />
+                                                    </React.Fragment>)
+                                                    break
+                                                default:
+                                                    return null;
+                                            }
+                                            switch (userInfo[0].state2) {
+                                                case 0:
+                                                    ele.push(<div css={stampDivCss}>
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
+                                                        <p css={pInImgCss}>承認中</p>
+                                                        <div css={overlayInImgCss} />
+                                                    </div>)
+                                                    break;
+                                                case 1:
+                                                    ele.push(<React.Fragment>
+                                                        <input onChange={handleSelectFileChange2} css={inputFileCss} ref={inputRef2} type={"file"} accept={"image/*"} />
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick2} />
+                                                    </React.Fragment>)
+                                                    break;
+                                                case 2:
+                                                    ele.push(<div css={stampDivCss}>
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
+                                                        <p css={pInImgCss}>承認済み</p>
+                                                        <div css={overlayInImgCss} />
+                                                    </div>)
+                                                    break;
+                                                case 3:
+                                                    ele.push(<React.Fragment>
+                                                        <input onChange={handleSelectFileChange2} css={inputFileCss} ref={inputRef2} type={"file"} accept={"image/*"} />
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick2} />
+                                                    </React.Fragment>)
+                                                    break
+                                                default:
+                                                    return null;
+                                            }
+                                            switch (userInfo[0].state3) {
+                                                case 0:
+                                                    ele.push(<div css={stampDivCss}>
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
+                                                        <p css={pInImgCss}>承認中</p>
+                                                        <div css={overlayInImgCss} />
+                                                    </div>)
+                                                    break;
+                                                case 1:
+                                                    ele.push(<React.Fragment>
+                                                        <input onChange={handleSelectFileChange3} css={inputFileCss} ref={inputRef3} type={"file"} accept={"image/*"} />
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick3} />
+                                                    </React.Fragment>)
+                                                    break;
+                                                case 2:
+                                                    ele.push(<div css={stampDivCss}>
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} />
+                                                        <p css={pInImgCss}>承認済み</p>
+                                                        <div css={overlayInImgCss} />
+                                                    </div>)
+                                                    break;
+                                                case 3:
+                                                    ele.push(<React.Fragment>
+                                                        <input onChange={handleSelectFileChange3} css={inputFileCss} ref={inputRef3} type={"file"} accept={"image/*"} />
+                                                        <img css={stampImgCss} src={`data:image/png;base64,${stampImg}`} onClick={handleSelectFileButtonClick3} />
+                                                    </React.Fragment>)
+                                                    break
+                                                default:
+                                                    return null;
+                                            }
+                                            return ele;
+                                        }
+                                        return null;
+                                    })()
+                                }
+                            </div>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </TableContainer>
+            
         </React.Fragment>
     )
 }

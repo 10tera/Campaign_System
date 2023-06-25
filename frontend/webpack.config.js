@@ -5,6 +5,8 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const Dotenv = require("dotenv-webpack");
+const environment = process.env.NODE_ENV || "dev";
 
 module.exports = {
     entry: "./src/main.tsx",
@@ -28,6 +30,9 @@ module.exports = {
             template: "./public/index.html",
             filename: "index.html",
             publicPath: "./"
+        }),
+        new Dotenv({
+            path: path.resolve(__dirname,`.env.${environment}`),
         }),
     ],
     watch: true

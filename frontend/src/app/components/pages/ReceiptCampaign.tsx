@@ -55,8 +55,6 @@ export const ReceiptCampaign = () => {
     const [imgFile,setImgFile] = useState<File>();
     const [prizeId,setPrizeId] = useState(0);
     useEffect(() => {
-        console.log(data)
-        console.log(companyData)
         if(!id)return;
         if(!(data&&companyData))return;
         for(let i=0;i<data.length;i++){
@@ -66,7 +64,7 @@ export const ReceiptCampaign = () => {
                 return;
             }
         }
-    },[]);
+    },[data,companyData,id]);
     const handleSelectFileButtonClick = () => {
         inputRef.current?.click();
     }
@@ -217,7 +215,12 @@ export const ReceiptCampaign = () => {
                                     </TableRow>
                                     <input onChange={handleSelectFileChange} css={inputFileCss} ref={inputRef} type={"file"} accept={"image/*"} />
                                     <TableRow>
-                                        <TableCell><Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button></TableCell>
+                                        <TableCell>
+                                            <Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button>
+                                            {
+                                                imgFile ? <p>{imgFile.name}を選択中</p> : null
+                                            }
+                                        </TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell><FormControl>
@@ -251,7 +254,7 @@ export const ReceiptCampaign = () => {
                                 </React.Fragment>)
                             }
                             //未承認
-                            else if (true) {
+                            else if (receiptUserInfo[0].state === 1) {
                                 return (<React.Fragment>
                                     <TableRow>
                                         <TableCell><h3>送信されたレシート画像は承認されませんでした。再度レシート画像を送信可能です。</h3></TableCell>
@@ -261,7 +264,12 @@ export const ReceiptCampaign = () => {
                                     </TableRow>
                                     <input onChange={handleSelectFileChange} css={inputFileCss} ref={inputRef} type={"file"} accept={"image/*"} />
                                     <TableRow>
-                                        <TableCell><Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button></TableCell>
+                                        <TableCell>
+                                            <Button variant={"contained"} onClick={handleSelectFileButtonClick}>ファイル選択</Button>
+                                            {
+                                                imgFile ? <p>{imgFile.name}を選択中</p> : null
+                                            }
+                                        </TableCell>
                                     </TableRow>
                                     {
                                         isError ? <TableRow>
@@ -277,9 +285,11 @@ export const ReceiptCampaign = () => {
                             }
                             //承認済み
                             else if (receiptUserInfo[0].state === 2) {
-                                return (<div>
-                                    <h3>送信されたレシート画像は承認されました。当選をお待ちください。</h3>
-                                </div>)
+                                return (<React.Fragment>
+                                    <TableRow>
+                                        <TableCell><h3>送信されたレシート画像は承認されました。当選をお待ちください。</h3></TableCell>
+                                    </TableRow>
+                                </React.Fragment>)
                             }
                             return null;
                         })()

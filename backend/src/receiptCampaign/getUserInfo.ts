@@ -10,20 +10,21 @@ const logger = log4js.getLogger();
 export default router.get("/getUserInfo", async (req, res) => {
     logger.info(`Access to /receiptCampaign/getUserInfo`);
     let connection:any;
-    if (!(req.query.uid && req.query.id)) {
+    if (!("uid" in req.query && "id" in req.query)) {
         res.status(401).send(`id/uidが指定されていません。`);
         return;
     }
     try {
         connection = await mysql.createConnection(db_setting);
-        const [row, fields] = await connection.execute(`SELECT * from receiptcampaign_${req.query.id.toString()} where uid = ? limit 1`,[req.query.uid]);
+        const id = req.query.id?.toString();
+        const [row, fields] = await connection.execute(`SELECT * from receiptcampaign_${id} where uid = ? limit 1`,[req.query.uid]);
         const [row2] = await connection.execute(`SELECT * from users where uid = ? limit 1`,[req.query.uid])
         if(row.length === 0){
             res.status(200).send([]);
             return;
         }
-        if(fs.existsSync(`config/receiptCampaign/${req.query.id.toString()}/${req.query.uid}.png`)){
-            const base64Data = fs.readFileSync(`config/receiptCampaign/${req.query.id.toString()}/${req.query.uid}.png`,{encoding: "base64"});
+        if(fs.existsSync(`config/receiptCampaign/${id}/${req.query.uid}.png`)){
+            const base64Data = fs.readFileSync(`config/receiptCampaign/${id}/${req.query.uid}.png`,{encoding: "base64"});
             res.status(200).send([{ ...row[0], address: row2[0].address, name: row2[0].name,img:base64Data }]);
             return;
         }

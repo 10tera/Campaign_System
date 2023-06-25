@@ -2,7 +2,6 @@ import express from "express";
 import log4js from "log4js";
 import mysql from "mysql2/promise";
 import { db_setting } from "../db/setting";
-import { connect } from "http2";
 
 const router = express.Router();
 const logger = log4js.getLogger();
@@ -10,13 +9,14 @@ const logger = log4js.getLogger();
 export default router.get("/get", async (req, res) => {
     logger.info(`Access to /receiptCampaign/get`);
     let connection;
-    if(!req.query.id){
+    if(!("id" in req.query)){
         res.status(401).send(`キャンペーンidが指定されていません。`);
         return;
     }
     try {
         connection = await mysql.createConnection(db_setting);
-        const [row, fields] = await connection.execute<mysql.RowDataPacket[]>(`SELECT * from receiptcampaign_${req.query.id.toString()}`);
+        const id = req.query.id?.toString();
+        const [row, fields] = await connection.execute<mysql.RowDataPacket[]>(`SELECT * from receiptcampaign_${id}`);
         res.status(200).send(row);
         return;
     } catch (e) {

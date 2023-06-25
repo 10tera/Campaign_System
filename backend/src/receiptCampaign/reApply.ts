@@ -3,7 +3,6 @@ import log4js from "log4js";
 import mysql from "mysql2/promise";
 import { db_setting } from "../db/setting";
 import multer from "multer";
-import dayjs from "dayjs";
 import fs from "fs";
 
 const upload = multer({ dest: "uploadDist/" });

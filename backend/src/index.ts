@@ -78,8 +78,6 @@ const corsOptions = {
 
 const app = express();
 
-//const connection = mysql.createConnection(db_setting);
-
 
 app.use(express.json());
 app.use(cors());

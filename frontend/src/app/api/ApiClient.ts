@@ -2,7 +2,7 @@ import {useQuery} from "react-query";
 import axios from "axios";
 import jssha from "jssha";
 
-const apiHost = "http://localhost:3100";
+const apiHost = process.env.REACT_APP_APIHOST;
 axios.defaults.headers.post["Access-Control-Allow-Origin"] = '*';
 axios.defaults.headers.post["Content-Type"] = "application/json";
 

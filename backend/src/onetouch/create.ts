@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
 import mysql from "mysql2/promise";
-import fs from "fs";
 import { db_setting } from "../db/setting";
 
 const router = express.Router();
