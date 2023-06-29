@@ -1,23 +1,21 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import fs from "fs";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 
 const router = express.Router();
 const logger = log4js.getLogger();
 
 export default router.delete("/delete", async (req, res) => {
     logger.info(`Access to /company/delete`);
-    let connection: any;
+    let connection;
     try {
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         await connection.beginTransaction();
         if (!req.body.id) {
             res.status(401).send("パラメータが不足しています。");
             return;
         }
-        
         const [] = await connection.execute(`DELETE FROM companys WHERE id = ${req.body.id}`);
         const [] = await connection.execute(`DROP TABLE IF EXISTS point_${req.body.id}`);
         /*
@@ -35,12 +33,14 @@ export default router.delete("/delete", async (req, res) => {
         await connection.commit();
         res.status(200).send("削除完了");
     } catch (e) {
-        await connection.rollback();
+        if(connection){
+            await connection.rollback();
+        }
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。")
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
         return;
     }

@@ -10,3 +10,13 @@ export const db_setting:mysql.ConnectionOptions = {
     database: process.env.DB_DATABASE,
     timezone: "jst"
 }
+export const db_pool_setting:mysql.PoolOptions = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    timezone: "jst",
+    connectionLimit: 10000,
+    queueLimit: 10000,
+    acquireTimeout: 10000,
+}

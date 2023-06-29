@@ -17,6 +17,8 @@ export default router.post("/apply",upload.single("img"),async(req,res) => {
     let connection: any;
     try {
         if(!(req.file && req.body && req.body.prizeId && req.body.uid && req.body.campaignId)){
+            console.log(req.body.uid)
+            console.log(req.file)
             res.status(401).send("パラメータが不足しています");
             return;
         }
