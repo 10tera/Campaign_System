@@ -1,8 +1,7 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
+import mysql,{Pool} from "mysql2/promise";
 import fs from "fs";
-import { db_setting } from "../db/setting";
 
 const router = express.Router();
 const logger = log4js.getLogger();
@@ -22,15 +21,16 @@ export default router.put("/changeUserState", async (req, res) => {
             res.status(401).send("パラメータが不足しています。");
             return;
         }
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         await connection.beginTransaction();
         if(req.body.state === 1){
-            const [] = await connection.execute(`update instantwin_${req.body.companyId} set state = 1, comment = '${req.body.comment}' where id = ${req.body.id}`);
+            const [] = await connection.query(`update instantwin_${req.body.companyId} set state = 1, comment = '${req.body.comment}' where id = ${req.body.id}`);
             await connection.commit();
             res.status(200).send("更新完了");
             return;
         }
-        const [row] = await connection.execute(`select * from instantwin_${req.body.companyId} where id = ${req.body.id}`);
+        const [row] = await connection.query(`select * from instantwin_${req.body.companyId} where id = ${req.body.id}`);
         if(row.length < 1){
             res.status(401).send("DBに存在しません。");
             return;
@@ -57,12 +57,13 @@ export default router.put("/changeUserState", async (req, res) => {
             const result = isHit(jsonData.probability);
             console.log(result)
             if(result){
-                const [] = await connection.execute(`update instantwin_${req.body.companyId} set state = 2, comment = '${req.body.comment}' where id = ${req.body.id}`);
+                const [] = await connection.query(`update instantwin_${req.body.companyId} set state = 2, comment = '${req.body.comment}' where id = ${req.body.id}`);
                 jsonData.limit--;
                 const after = JSON.stringify(jsonData, undefined, 4);
                 fs.writeFile(`config/instantWin/${req.body.companyId}.json`, after, async (err2) => {
                     if (err2) {
                         logger.error(err2);
+                        await connection.rollback();
                         res.status(401).send("何らかのエラーが発生しました。");
                         return;
                     }
@@ -72,7 +73,7 @@ export default router.put("/changeUserState", async (req, res) => {
                 });
             }
             else{
-                const [] = await connection.execute(`update instantwin_${req.body.companyId} set state = 3, comment = '${req.body.comment}' where id = ${req.body.id}`);
+                const [] = await connection.query(`update instantwin_${req.body.companyId} set state = 3, comment = '${req.body.comment}' where id = ${req.body.id}`);
                 await connection.commit();
                 res.status(200).send("更新完了");
                 return;
@@ -82,11 +83,14 @@ export default router.put("/changeUserState", async (req, res) => {
         
     } catch (e) {
         logger.error(e);
+        if(connection){
+            await connection.rollback();
+        }
         await connection.rollback();
         res.status(401).send("何らかのエラーが発生しました。");
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 

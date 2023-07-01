@@ -16,8 +16,8 @@ export default router.post("/add", async (req, res) => {
         const pool: Pool = req.app.locals.pool;
         connection = await pool.getConnection();
         await connection.beginTransaction();
-        const [row]:any = await connection.execute(`INSERT INTO companys (name) values ('${req.body.name}')`);
-        await connection.execute(`CREATE TABLE point_${row.insertId.toString()}(id int AUTO_INCREMENT PRIMARY KEY, uid varchar(255) not null, point int default 0 not null)`);
+        const [row]:any = await connection.query(`INSERT INTO companys (name) values ('${req.body.name}')`);
+        await connection.query(`CREATE TABLE point_${row.insertId.toString()}(id int AUTO_INCREMENT PRIMARY KEY, uid varchar(255) not null, point int default 0 not null)`);
         await connection.commit();
         res.status(200).send("登録が完了しました。");
         return;

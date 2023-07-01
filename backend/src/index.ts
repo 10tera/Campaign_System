@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mysql from "mysql2";
 import {createPool} from "mysql2/promise";
-import { db_setting } from "./db/setting";
 import { db_pool_setting } from "./db/setting";
 import cluster from "cluster";
 import os from "os";
@@ -104,18 +103,22 @@ if(cluster.isPrimary){
     for (let i = 0; i < os.cpus().length;i++){
         cluster.fork();
     }
+    cluster.on("exit",(exit_worker,code,signal) => {
+        logger.error(`Worker ${exit_worker.id} died with code ${code} and signal ${signal}`);
+        cluster.fork();
+    })
 }
 else{
     const pool = createPool(db_pool_setting);
-
+    const workerId = cluster.worker?.id;
     const app = express();
 
     app.locals.pool = pool;
-
+    
     app.use(express.json());
     app.use(cors());
     app.listen(process.env.PORT, () => {
-        logger.info(`Start server on port ${process.env.PORT}`);
+        logger.info(`Start server on port ${process.env.PORT}. Worker ${workerId} started.`);
     });
 
     app.use("/user", addProfile);

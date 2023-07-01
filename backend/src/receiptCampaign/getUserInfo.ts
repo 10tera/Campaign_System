@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 import fs from "fs";
 
 const router = express.Router();
@@ -15,10 +14,11 @@ export default router.get("/getUserInfo", async (req, res) => {
         return;
     }
     try {
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         const id = req.query.id?.toString();
-        const [row, fields] = await connection.execute(`SELECT * from receiptcampaign_${id} where uid = ? limit 1`,[req.query.uid]);
-        const [row2] = await connection.execute(`SELECT * from users where uid = ? limit 1`,[req.query.uid])
+        const [row, fields] = await connection.query(`SELECT * from receiptcampaign_${id} where uid = ? limit 1`,[req.query.uid]);
+        const [row2] = await connection.query(`SELECT * from users where uid = ? limit 1`,[req.query.uid])
         if(row.length === 0){
             res.status(200).send([]);
             return;
@@ -29,7 +29,7 @@ export default router.get("/getUserInfo", async (req, res) => {
             return;
         }
         else{
-            res.status(200).send([{ ...row[0], address: row2[0].address, name: row2[0].name }]);
+            res.status(401).send("画像が存在しません");
             return;
         }
     } catch (e) {
@@ -38,7 +38,7 @@ export default router.get("/getUserInfo", async (req, res) => {
         return;
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 });

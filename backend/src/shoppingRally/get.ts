@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 
 const router = express.Router();
 const logger = log4js.getLogger();
@@ -15,8 +14,9 @@ export default router.get("/get", async (req, res) => {
             return;
         }
         const companyId = req.query.companyId?.toString();
-        connection = await mysql.createConnection(db_setting);
-        const [row, fields] = await connection.execute<mysql.RowDataPacket[]>(`SELECT * from shoppingRally_${companyId}`);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
+        const [row, fields] = await connection.query<mysql.RowDataPacket[]>(`SELECT * from shoppingRally_${companyId}`);
         res.status(200).send(row);
         return;
     } catch (e) {
@@ -25,7 +25,7 @@ export default router.get("/get", async (req, res) => {
         return;
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 });

@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 
 const router = express.Router();
 const logger = log4js.getLogger();
@@ -14,16 +13,17 @@ export default router.post("/create", async (req, res) => {
             res.status(401).send("パラメータが不足しています。");
             return;
         }
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         await connection.beginTransaction();
-        const [row_prize] = await connection.execute(`SELECT * FROM onetouch where id = ${req.body.prizeId}`);
+        const [row_prize] = await connection.query(`SELECT * FROM onetouch where id = ${req.body.prizeId}`);
         if(!(row_prize && row_prize.length > 0)){
             res.status(401).send("賞品が存在しません。");
             return;
         }
         const needPoint = row_prize[0].point;
         const companyId = row_prize[0].companyId.toString()
-        const [row_userData] = await connection.execute(`SELECT * FROM point_${companyId} where uid = '${req.body.uid}'`);
+        const [row_userData] = await connection.query(`SELECT * FROM point_${companyId} where uid = '${req.body.uid}'`);
         if(!(row_userData && row_userData.length > 0)){
             res.status(401).send("ユーザーポイントデータがありません。");
             return;
@@ -33,18 +33,20 @@ export default router.post("/create", async (req, res) => {
             res.status(401).send("ポイントが足りません。");
             return;
         }
-        const [] = await connection.execute(`UPDATE point_${companyId} set point = ${nowPoint-needPoint} where uid = '${req.body.uid}'`);
-        const [] = await connection.execute(`INSERT INTO onetouchlog (uid, prizeId) values('${req.body.uid}', ${req.body.prizeId})`);
+        const [] = await connection.query(`UPDATE point_${companyId} set point = ${nowPoint-needPoint} where uid = '${req.body.uid}'`);
+        const [] = await connection.query(`INSERT INTO onetouchlog (uid, prizeId) values('${req.body.uid}', ${req.body.prizeId})`);
         await connection.commit();
         res.status(200).send("作成が完了しました。");
         return;
     } catch (e) {
-        await connection.rollback();
+        if(connection){
+            await connection.rollback();
+        }
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。");
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 });

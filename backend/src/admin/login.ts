@@ -15,7 +15,7 @@ export default router.get("/login", async (req, res) => {
         }
         const pool: Pool = req.app.locals.pool;
         connection = await pool.getConnection();
-        const [row, fields]:any = await connection.execute(`SELECT * from admin where uid = ? and password = ? limit 1`, [req.query.uid,req.query.password]);
+        const [row, fields]:any = await connection.query(`SELECT * from admin where uid = ? and password = ? limit 1`, [req.query.uid,req.query.password]);
         if (row.length === 0) {
             res.status(401).send({msg: "cannot find"});
             return;

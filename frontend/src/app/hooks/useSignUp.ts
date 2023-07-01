@@ -248,6 +248,7 @@ export const useSignUp = () => {
                 break;
             case 1:
                 dispatch({ type: "setMode", payload: 2 });
+                dispatch({ type: "setIsButtonDisabled", payload: true });
                 break;
             case 2:
                 await handleSignUpButtonClick();

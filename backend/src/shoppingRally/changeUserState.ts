@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 
 const router = express.Router();
 const logger = log4js.getLogger();
@@ -14,19 +13,22 @@ export default router.put("/changeUserState", async (req, res) => {
             res.status(401).send("パラメータが不足しています。");
             return;
         }
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         await connection.beginTransaction();
-        const [] = await connection.execute(`update shoppingrally_${req.body.companyId} set ${req.body.key} = ${req.body.state}, comment = '${req.body.comment}' where uid = '${req.body.uid}'`);
+        const [] = await connection.query(`update shoppingrally_${req.body.companyId} set ${req.body.key} = ${req.body.state}, comment = '${req.body.comment}' where uid = '${req.body.uid}'`);
         await connection.commit();
         res.status(200).send("更新完了");
         return;
     } catch (e) {
         logger.error(e);
-        await connection.rollback();
+        if(connection){
+            await connection.rollback();
+        }
         res.status(401).send("何らかのエラーが発生しました。");
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 

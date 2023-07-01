@@ -16,8 +16,8 @@ export default router.delete("/delete", async (req, res) => {
             res.status(401).send("パラメータが不足しています。");
             return;
         }
-        const [] = await connection.execute(`DELETE FROM companys WHERE id = ${req.body.id}`);
-        const [] = await connection.execute(`DROP TABLE IF EXISTS point_${req.body.id}`);
+        const [] = await connection.query(`DELETE FROM companys WHERE id = ${req.body.id}`);
+        const [] = await connection.query(`DROP TABLE IF EXISTS point_${req.body.id}`);
         /*
         const [] = await connection.execute(`DROP TABLES IF EXISTS receiptCampaign_${req.body.uid}`);
         const [] = await connection.execute(`DROP TABLES IF EXISTS shoppingRally_${req.body.uid}`);

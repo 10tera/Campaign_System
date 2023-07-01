@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 import multer from "multer";
 import dayjs from "dayjs";
 import fs from "fs";
@@ -20,9 +19,10 @@ export default router.post("/apply", upload.single("img"), async (req, res) => {
             res.status(401).send("パラメータが不足しています");
             return;
         }
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         await connection.beginTransaction();
-        const [row] = await connection.execute(`SELECT * from shoppingrally_${req.body.companyId} where uid = ? limit 1`, [req.body.uid]);
+        const [row] = await connection.query(`SELECT * from shoppingrally_${req.body.companyId} where uid = ? limit 1`, [req.body.uid]);
         if(row.length === 0){
             //0:承認中
             //1:未送付
@@ -46,10 +46,11 @@ export default router.post("/apply", upload.single("img"), async (req, res) => {
                     return;
             }
             const nowDate = dayjs();
-            const [] = await connection.execute(`INSERT INTO shoppingrally_${req.body.companyId} (uid, state1, state2, state3, comment, date) values ('${req.body.uid}', ${state1}, ${state2}, ${state3}, '', '${nowDate.format()}')`);
+            const [] = await connection.query(`INSERT INTO shoppingrally_${req.body.companyId} (uid, state1, state2, state3, comment, date) values ('${req.body.uid}', ${state1}, ${state2}, ${state3}, '', '${nowDate.format()}')`);
             fs.rename(`uploadDist/${req.file.filename}`, `config/shoppingRally/${req.body.companyId}/${req.body.uid}_${req.body.key}.png`, async (err) => {
                 if (err) {
                     logger.error(err);
+                    await connection.rollback();
                     res.status(401).send("エラーが発生しました");
                     return;
                 }
@@ -77,10 +78,11 @@ export default router.post("/apply", upload.single("img"), async (req, res) => {
                 res.status(401).send("更新はできません。");
                 return;
             }
-            const [] = await connection.execute(`UPDATE shoppingrally_${req.body.companyId} set ${key} = 0 where uid = '${req.body.uid}'`);
+            const [] = await connection.query(`UPDATE shoppingrally_${req.body.companyId} set ${key} = 0 where uid = '${req.body.uid}'`);
             fs.rename(`uploadDist/${req.file.filename}`, `config/shoppingRally/${req.body.companyId}/${req.body.uid}_${req.body.key}.png`, async (err) => {
                 if (err) {
                     logger.error(err);
+                    await connection.rollback();
                     res.status(401).send("エラーが発生しました");
                     return;
                 }
@@ -90,13 +92,15 @@ export default router.post("/apply", upload.single("img"), async (req, res) => {
         }
         
     } catch (e) {
-        await connection.rollback();
+        if(connection){
+            await connection.rollback();
+        }
         logger.error(e);
         res.status(401).send("エラーが発生しました");
         return;
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 });

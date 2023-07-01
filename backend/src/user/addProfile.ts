@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 
 import { isPostCode, isAddress, isName, isFurigana, isPhone, isBirth } from "./logic";
 
@@ -53,23 +52,26 @@ export default router.post("/add",async(req,res) => {
     }
     let connection:any;
     try {
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         await connection.beginTransaction();
         if(req.body.isNotice === 0){
-            const [row, fields] = await connection.execute(`INSERT INTO users (uid, postCode, address, name, furigana, phone, birth, isNotice) values ('${req.body.uid}', '${req.body.postCode}', '${req.body.address}', '${req.body.name}', '${req.body.furigana}', '${req.body.phone}', '${req.body.birth}', 0)`);
+            const [row, fields] = await connection.query(`INSERT INTO users (uid, postCode, address, name, furigana, phone, birth, isNotice) values ('${req.body.uid}', '${req.body.postCode}', '${req.body.address}', '${req.body.name}', '${req.body.furigana}', '${req.body.phone}', '${req.body.birth}', 0)`);
         }
         else{
-            const [row, fields] = await connection.execute(`INSERT INTO users (uid, postCode, address, name, furigana, phone, birth) values ('${req.body.uid}', '${req.body.postCode}', '${req.body.address}', '${req.body.name}', '${req.body.furigana}', '${req.body.phone}', '${req.body.birth}')`);
+            const [row, fields] = await connection.query(`INSERT INTO users (uid, postCode, address, name, furigana, phone, birth) values ('${req.body.uid}', '${req.body.postCode}', '${req.body.address}', '${req.body.name}', '${req.body.furigana}', '${req.body.phone}', '${req.body.birth}')`);
         }
         await connection.commit();
         res.status(200).send("登録完了");
     } catch (e) {
         logger.error(e);
+        if(connection){
+            await connection.rollback();
+        }
         res.status(401).send("DB操作でエラーが発生しました。");
-        await connection?.rollback();
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 });

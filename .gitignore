@@ -13,4 +13,6 @@ backend/config/shoppingRally/*
 !backend/config/shoppingRally/.gitkeep
 backend/logs/*
 !backend/logs/.gitkeep
+backend/uploadDist/*
+!backend/uploadDist/.gitkeep
 frontend/.env

@@ -1,9 +1,8 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
+import mysql,{Pool} from "mysql2/promise";
 import fs from "fs";
 import multer from "multer";
-import { db_setting } from "../db/setting";
 
 const router = express.Router();
 const logger = log4js.getLogger();
@@ -35,20 +34,23 @@ export default router.post("/create", upload.single("img"), async (req, res) => 
                 res.status(401).send("ファイル作成時にエラーが発生しました。");
                 return;
             }
-            connection = await mysql.createConnection(db_setting);
+            const pool: Pool = req.app.locals.pool;
+            connection = await pool.getConnection();
             await connection.beginTransaction();
-            const [] = await connection.execute(`CREATE TABLE shoppingrally_${req.body.companyId}(id int AUTO_INCREMENT PRIMARY KEY, uid varchar(255) not null, state1 tinyint not null, state2 tinyint not null, state3 tinyint not null, comment varchar(255) not null, date varchar(255) not null)`);
+            const [] = await connection.query(`CREATE TABLE shoppingrally_${req.body.companyId}(id int AUTO_INCREMENT PRIMARY KEY, uid varchar(255) not null, state1 tinyint not null, state2 tinyint not null, state3 tinyint not null, comment varchar(255) not null, date varchar(255) not null)`);
             await connection.commit();
             res.status(200).send("作成が完了しました。");
             return;
         });
     } catch (e) {
-        await connection.rollback();
+        if(connection){
+            await connection.rollback();
+        }
         logger.error(e);
         res.status(401).send("何らかのエラーが発生しました。");
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release();
         }
     }
 });

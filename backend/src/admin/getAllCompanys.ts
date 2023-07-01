@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
 import mysql,{Pool} from "mysql2/promise";
-import { db_setting } from "../db/setting";
 
 const router = express.Router();
 const logger = log4js.getLogger();
@@ -13,7 +12,7 @@ export default router.get("/getAllCompanys", async (req, res) => {
         const pool:Pool = req.app.locals.pool;
         connection = await pool.getConnection();
         
-        const [row, fields] = await connection.execute(`SELECT * from companys`);
+        const [row, fields] = await connection.query(`SELECT * from companys`);
         res.status(200).send(row);
         return;
     } catch (e) {

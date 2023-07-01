@@ -1,7 +1,6 @@
 import express from "express";
 import log4js from "log4js";
-import mysql from "mysql2/promise";
-import { db_setting } from "../db/setting";
+import mysql,{Pool} from "mysql2/promise";
 import multer from "multer";
 import dayjs from "dayjs";
 import fs from "fs";
@@ -14,24 +13,26 @@ const logger = log4js.getLogger();
 
 export default router.post("/apply", upload.single("img"), async (req, res) => {
     logger.info(`Access to /instantWin/apply`);
-    let connection: any;
+    let connection:any;
     try {
         if (!(req.file && req.body && req.body.uid && req.body.campaignId)) {
             res.status(401).send("パラメータが不足しています");
             return;
         }
-        connection = await mysql.createConnection(db_setting);
+        const pool: Pool = req.app.locals.pool;
+        connection = await pool.getConnection();
         await connection.beginTransaction();
-        const [row] = await connection.execute(`SELECT * from instantwin_${req.body.campaignId} where uid = ? limit 1`, [req.body.uid]);
+        const [row]:any = await connection.query(`SELECT * from instantwin_${req.body.campaignId} where uid = ? limit 1`, [req.body.uid]);
         if (row.length !== 0) {
             res.status(401).send("既に応募済みです。");
             return;
         }
         const nowDate = dayjs();
-        const [] = await connection.execute(`INSERT INTO instantwin_${req.body.campaignId} (uid, imgPath, state, comment, date) values ('${req.body.uid}', '${req.body.uid}.png', 0, '', '${nowDate.format()}')`);
+        const [] = await connection.query(`INSERT INTO instantwin_${req.body.campaignId} (uid, imgPath, state, comment, date) values ('${req.body.uid}', '${req.body.uid}.png', 0, '', '${nowDate.format()}')`);
         fs.rename(`uploadDist/${req.file.filename}`, `config/instantwin/${req.body.campaignId}/${req.body.uid}.png`, async (err) => {
             if (err) {
                 logger.error(err);
+                await connection.rollback();
                 res.status(401).send("エラーが発生しました");
                 return;
             }
@@ -39,13 +40,15 @@ export default router.post("/apply", upload.single("img"), async (req, res) => {
             res.status(200).send("応募完了");
         });
     } catch (e) {
-        await connection.rollback();
+        if(connection){
+            await connection.rollback();
+        }
         logger.error(e);
         res.status(401).send("エラーが発生しました");
         return;
     } finally {
         if (connection) {
-            await connection.end();
+            connection.release()
         }
     }
 });
