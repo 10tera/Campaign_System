@@ -69,7 +69,7 @@ const option_get: autocannon.Options = {
     connections: 1000,
     amount: 10000
 }
-/*
+
 autocannon(option_post_apply, (err, result) => {
     if (err) {
         console.error('Error:', err);
@@ -77,7 +77,7 @@ autocannon(option_post_apply, (err, result) => {
         console.log('Results:', result);
     }
 });
-*/
+
 /*
 autocannon(option_get, (err, result) => {
     if (err) {
@@ -87,10 +87,11 @@ autocannon(option_get, (err, result) => {
     }
 });
 */
-
+/*
 loadtest.loadTest(options,(err:any,result:any) => {
     if(err){
         return console.error(err);
     }
     console.log(result);
 });
+*/
